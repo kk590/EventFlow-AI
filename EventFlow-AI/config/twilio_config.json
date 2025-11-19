@@ -1,0 +1,34 @@
+{
+  "twilio": {
+    "description": "Twilio configuration for voice and SMS handling",
+    "account_sid": "your_account_sid",
+    "auth_token": "your_auth_token",
+    "phone_number": "+1234567890",
+    "webhooks": {
+      "voice": "/webhook/twilio/voice",
+      "sms": "/webhook/twilio/sms",
+      "recording": "/webhook/twilio/recording",
+      "transcription": "/webhook/twilio/transcription"
+    },
+    "voice_settings": {
+      "max_length": 60,
+      "transcribe": true,
+      "transcribe_callback": "/webhook/twilio/transcription"
+    },
+    "sms_settings": {
+      "auto_response": true,
+      "response_template": "Thanks for your message! We'll get back to you shortly about your event planning needs."
+    }
+  },
+  "testing": {
+    "test_numbers": [
+      "+1234567890",
+      "+0987654321"
+    ],
+    "test_messages": [
+      "Hi, I need help planning a corporate event for 100 people in March.",
+      "Looking to plan a wedding for 150 guests in June.",
+      "Birthday party for 50 people next month."
+    ]
+  }
+}

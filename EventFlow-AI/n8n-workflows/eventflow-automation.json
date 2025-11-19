@@ -1,0 +1,229 @@
+{
+  "name": "EventFlow AI Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "nodeType": "trigger",
+        "nodeTypeVersion": 1,
+        "webhookId": "eventflow-webhook",
+        "httpMethod": "POST",
+        "path": "webhook",
+        "responseMode": "responseNode"
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        240,
+        300
+      ],
+      "webhookId": "eventflow-webhook"
+    },
+    {
+      "parameters": {
+        "functionCode": "// Process incoming webhook data from EventFlow AI\nconst data = $json;\n\n// Extract relevant information\nconst eventType = data.eventType;\nconst leadData = data.data;\n\n// Set up response and next steps\nlet response = {\n  status: 'received',\n  nextAction: 'process_lead'\n};\n\n// Route based on event type\nswitch(eventType) {\n  case 'new_lead':\n    response.nextAction = 'qualify_lead';\n    response.priority = leadData.priority || 'medium';\n    break;\n  case 'transcription_ready':\n    response.nextAction = 'analyze_transcription';\n    break;\n  case 'sms_received':\n    response.nextAction = 'process_sms';\n    break;\n  default:\n    response.nextAction = 'manual_review';\n}\n\n// Add timestamp\nresponse.processedAt = new Date().toISOString();\n\nreturn response;"
+      },
+      "id": "process-webhook",
+      "name": "Process Webhook",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        440,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "table",
+        "operation": "append",
+        "base": "={{ $env.AIRTABLE_BASE_ID }}",
+        "table": "Leads",
+        "columns": {
+          "PhoneNumber": "={{ $json.data.fromNumber }}",
+          "EventType": "={{ $json.data.categories ? $json.data.categories.join(', ') : 'Unknown' }}",
+          "Status": "new",
+          "Notes": "={{ `Initial contact via ${$json.data.source}. Transcription: ${$json.data.transcription}` }}"
+        }
+      },
+      "id": "airtable-leads",
+      "name": "Airtable - Create Lead",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 1,
+      "position": [
+        640,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "table",
+        "operation": "update",
+        "base": "={{ $env.AIRTABLE_BASE_ID }}",
+        "table": "Transcripts",
+        "updateKey": {
+          "name": "MessageID",
+          "value": "={{ $json.data.messageId }}"
+        },
+        "columns": {
+          "Status": "processed",
+          "Priority": "={{ $json.priority === 'high' ? 1 : $json.priority === 'medium' ? 2 : 3 }}"
+        }
+      },
+      "id": "airtable-transcripts",
+      "name": "Airtable - Update Transcript",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 1,
+      "position": [
+        640,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "resource": "message",
+        "operation": "send",
+        "from": "={{ $env.TWILIO_PHONE_NUMBER }}",
+        "to": "={{ $json.data.fromNumber }}",
+        "body": "={{ `Hi! Thanks for contacting EventFlow AI about your ${$json.data.categories ? $json.data.categories[0] : 'event'} planning needs. We'll be in touch shortly to discuss details!` }}"
+      },
+      "id": "twilio-sms",
+      "name": "Twilio - Send SMS",
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [
+        840,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "create",
+        "channel": "={{ $env.SLACK_CHANNEL }}",
+        "text": "={{ `📞 New lead from ${$json.data.fromNumber}: ${$json.data.transcription?.substring(0, 100)}...\\nEvent Type: ${$json.data.categories ? $json.data.categories.join(', ') : 'Unknown'}\\nPriority: ${$json.priority}` }}"
+      },
+      "id": "slack-notify",
+      "name": "Slack - Notify Team",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 1,
+      "position": [
+        840,
+        500
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "respond-webhook",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        1040,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Process Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Webhook": {
+      "main": [
+        [
+          {
+            "node": "Airtable - Create Lead",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Airtable - Update Transcript",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Twilio - Send SMS",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Slack - Notify Team",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable - Create Lead": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable - Update Transcript": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Twilio - Send SMS": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack - Notify Team": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "versionId": "1",
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "id": "eventflow-automation",
+  "createdAt": "2024-01-01T00:00:00.000Z",
+  "updatedAt": "2024-01-01T00:00:00.000Z"
+}

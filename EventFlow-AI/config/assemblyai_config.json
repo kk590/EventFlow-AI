@@ -1,0 +1,54 @@
+{
+  "assemblyai": {
+    "description": "AssemblyAI configuration for audio transcription",
+    "api_key": "your_api_key",
+    "settings": {
+      "language_code": "en_us",
+      "punctuate": true,
+      "format_text": true,
+      "speaker_labels": true,
+      "auto_highlights": true,
+      "sentiment_analysis": true,
+      "entity_detection": true,
+      "content_safety": true,
+      "topic_detection": true
+    },
+    "audio_config": {
+      "sample_rate": 16000,
+      "channels": 1,
+      "format": "wav",
+      "max_duration": 300,
+      "supported_formats": ["mp3", "wav", "m4a", "flac", "webm"]
+    },
+    "processing": {
+      "confidence_threshold": 0.7,
+      "retry_attempts": 3,
+      "timeout": 300,
+      "webhook_url": "/webhook/twilio/transcription"
+    },
+    "pricing": {
+      "per_hour_rate": 0.25,
+      "free_tier_hours": 5,
+      "monthly_limit": 100
+    }
+  },
+  "transcription_features": {
+    "real_time": false,
+    "diarization": true,
+    "noise_reduction": true,
+    "music_detection": false,
+    "speaker_identification": false
+  },
+  "output_format": {
+    "include_timestamps": true,
+    "include_confidence": true,
+    "include_speaker_labels": true,
+    "format": "json",
+    "webhook_events": ["completed", "error"]
+  },
+  "testing": {
+    "sample_audio_url": "https://example.com/sample-audio.wav",
+    "test_transcription": "This is a test transcription for EventFlow AI.",
+    "expected_confidence": 0.95
+  }
+}

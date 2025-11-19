@@ -1,0 +1,78 @@
+{
+  "airtable": {
+    "description": "Airtable configuration for data storage",
+    "api_key": "your_api_key",
+    "base_id": "your_base_id",
+    "tables": {
+      "transcripts": {
+        "name": "Transcripts",
+        "fields": {
+          "MessageID": "Single Line Text",
+          "FromNumber": "Phone Number",
+          "Transcription": "Long Text",
+          "Source": "Single Select (voice/sms)",
+          "Timestamp": "Date & Time",
+          "Status": "Single Select (new/analyzed)",
+          "Categories": "Multiple Select",
+          "Confidence": "Number",
+          "Duration": "Number"
+        }
+      },
+      "leads": {
+        "name": "Leads",
+        "fields": {
+          "Name": "Single Line Text",
+          "Phone": "Phone Number",
+          "Email": "Email",
+          "EventType": "Single Select",
+          "EventDate": "Date",
+          "GuestCount": "Number",
+          "Budget": "Currency",
+          "Status": "Single Select",
+          "Source": "Single Select",
+          "Created": "Date & Time"
+        }
+      },
+      "analytics": {
+        "name": "Analytics",
+        "fields": {
+          "Date": "Date",
+          "TotalCalls": "Number",
+          "TotalSMS": "Number",
+          "TranscriptionsProcessed": "Number",
+          "AvgConfidence": "Number",
+          "TopCategories": "Multiple Select",
+          "ResponseTime": "Number"
+        }
+      }
+    },
+    "api_settings": {
+      "rate_limit": 5,
+      "timeout": 30,
+      "retry_attempts": 3
+    }
+  },
+  "data_processing": {
+    "categories": [
+      "Wedding Planning",
+      "Corporate Event",
+      "Birthday Party",
+      "Conference",
+      "Business Meeting",
+      "Social Party",
+      "Venue Booking",
+      "Catering Services",
+      "Entertainment",
+      "Photography Services"
+    ],
+    "keywords": {
+      "wedding": ["wedding", "marriage", "bridal"],
+      "corporate": ["corporate", "business", "company", "meeting"],
+      "birthday": ["birthday", "celebration", "party"],
+      "conference": ["conference", "seminar", "presentation"],
+      "venue": ["venue", "location", "hall", "space"],
+      "catering": ["catering", "food", "menu", "dinner"],
+      "photography": ["photography", "photos", "photographer"]
+    }
+  }
+}
