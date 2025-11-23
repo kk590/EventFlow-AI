@@ -1,0 +1,7 @@
+# EventFlow-AI Root Requirements
+# This file points to the backend requirements
+# For development, install backend requirements:
+# pip install -r backend/requirements.txt
+
+# Or use this file to install all dependencies:
+-r backend/requirements.txt
