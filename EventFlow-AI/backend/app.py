@@ -7,9 +7,13 @@ import assemblyai as aai
 import requests
 import json
 from datetime import datetime
+from config_validator import ConfigValidator
 
 # Load environment variables
 load_dotenv()
+
+# Validate configuration before starting
+ConfigValidator.validate_or_exit()
 
 app = Flask(__name__)
 CORS(app)
@@ -274,3 +278,4 @@ def log_call_event(event_type, data):
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=True)
+
