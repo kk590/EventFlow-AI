@@ -1,7 +1,8 @@
 const Dashboard = ({ stats, recentLeads }) => {
   const handleAddLead = async () => {
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
     try {
-      const response = await fetch('http://localhost:5000/api/leads', {
+      const response = await fetch('https://eventflow-ai-backend.onrender.com/api/leads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -20,7 +21,7 @@ const Dashboard = ({ stats, recentLeads }) => {
 
   const handleBulkSMS = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/sms/bulk', {
+      const response = await fetch('https://eventflow-ai-backend.onrender.com/api/sms/bulk', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -52,3 +53,4 @@ const Dashboard = ({ stats, recentLeads }) => {
     <button onClick={handleGenerateReport} className="...">Generate Report</button>
   );
 };
+
