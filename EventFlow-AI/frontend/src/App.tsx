@@ -1,3 +1,4 @@
+import DashboardPage from "./pages/DashboardPage";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -17,7 +18,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/dashboard" element={<Dashboard stats={{totalLeads: 0, newLeads: 0, convertedLeads: 0, activeEvents: 0}} recentLeads={[]} />} />
-          
+          <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
