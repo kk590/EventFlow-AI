@@ -274,8 +274,78 @@ def log_call_event(event_type, data):
         print(f"[{datetime.now()}] {event_type}: {json.dumps(data)}")
     except Exception as e:
         app.logger.error(f"Error logging event: {str(e)}")
+@app.route('/api/leads', methods=['POST'])
+def add_lead():
+    """Add a manual lead"""
+    try:
+        data = request.get_json()
+        # Store in Airtable
+        url = f"https://api.airtable.com/v0/{AIRTABLE_BASE_ID}/Leads"
+        headers = {
+            "Authorization": f"Bearer {AIRTABLE_API_KEY}",
+            "Content-Type": "application/json"
+        }
+        lead_data = {
+            "fields": {
+                "Name": data.get('name'),
+                "PhoneNumber": data.get('phoneNumber'),
+                "EventType": data.get('eventType'),
+                "Status": data.get('status', 'new'),
+                "Timestamp": datetime.now().isoformat()
+            }
+        }
+        response = requests.post(url, headers=headers, json=lead_data)
+        return jsonify(response.json()), response.status_code
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/sms/bulk', methods=['POST'])
+def send_bulk_sms():
+    """Send bulk SMS"""
+    try:
+        data = request.get_json()
+        # Add Twilio SMS sending logic here
+        return jsonify({"message": "SMS sent", "count": len(data.get('recipients', []))})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/reports', methods=['GET'])
+def generate_report():
+    """Generate a report"""
+    try:
+        # Add report logic here
+        return jsonify({"report": "Generated successfully", "timestamp": datetime.now().isoformat()})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/stats', methods=['GET'])
+def get_stats():
+    """Get dashboard stats"""
+    try:
+        # Query Airtable for stats
+        return jsonify({
+            "totalLeads": 10,
+            "newLeads": 5,
+            "convertedLeads": 3,
+            "activeEvents": 2
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/leads/recent', methods=['GET'])
+def get_recent_leads():
+    """Get recent leads"""
+    try:
+        # Query Airtable
+        return jsonify([
+            {"id": 1, "name": "John Doe", "phoneNumber": "+1234567890", "eventType": "Wedding", "status": "new", "timestamp": datetime.now().isoformat()}
+        ])
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=True)
+
 
