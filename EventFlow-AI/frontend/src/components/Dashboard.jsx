@@ -46,6 +46,55 @@ const RecentLeadCard = ({ lead }) => (
 );
 
 const Dashboard = ({ stats, recentLeads }) => {
+  const handleAddLead = async () => {
+  try {
+    const response = await fetch('https://eventflow-ai-backend.onrender.com/api/leads', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: 'Manual Lead',
+        phoneNumber: '+1234567890',
+        eventType: 'Wedding',
+        status: 'new'
+      })
+    });
+    const data = await response.json();
+    alert('Lead added: ' + JSON.stringify(data));
+  } catch (error) {
+    console.error('Error adding lead:', error);
+    alert('Error: ' + error.message);
+  }
+};
+
+const handleBulkSMS = async () => {
+  try {
+    const response = await fetch('https://eventflow-ai-backend.onrender.com/api/sms/bulk', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: 'Hello from EventFlow AI!',
+        recipients: ['+1234567890']
+      })
+    });
+    const data = await response.json();
+    alert('SMS sent: ' + JSON.stringify(data));
+  } catch (error) {
+    console.error('Error sending SMS:', error);
+    alert('Error: ' + error.message);
+  }
+};
+
+const handleGenerateReport = async () => {
+  try {
+    const response = await fetch('https://eventflow-ai-backend.onrender.com/api/reports');
+    const data = await response.json();
+    alert('Report: ' + JSON.stringify(data));
+  } catch (error) {
+    console.error('Error generating report:', error);
+    alert('Error: ' + error.message);
+  }
+};
+
   return (
     <div className="space-y-6">
       <div>
@@ -101,13 +150,13 @@ const Dashboard = ({ stats, recentLeads }) => {
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
+         <button onClick={handleAddLead} className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
             Add Manual Lead
           </button>
-          <button className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors">
+          <button onClick={handleBulkSMS} className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors">
             Send Bulk SMS
           </button>
-          <button className="bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600 transition-colors">
+          <button onClick={handleGenerateReport} className="bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600 transition-colors">
             Generate Report
           </button>
         </div>
@@ -118,3 +167,4 @@ const Dashboard = ({ stats, recentLeads }) => {
 
 export default Dashboard;
   
+
