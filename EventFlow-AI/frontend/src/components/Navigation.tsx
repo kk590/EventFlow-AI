@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -49,12 +50,16 @@ export default function Navigation() {
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center space-x-4">
-            <Button variant="ghost" className="text-sm">
-              Sign In
-            </Button>
-            <Button className="bg-primary hover:bg-primary/90 text-primary-foreground glow-teal">
-              Get Started
-            </Button>
+            <Link to="/dashboard">
+              <Button variant="ghost" className="text-sm">
+                Sign In
+              </Button>
+            </Link>
+            <Link to="/dashboard">
+              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground glow-teal">
+                Get Started
+              </Button>
+            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -89,12 +94,16 @@ export default function Navigation() {
                 </a>
               ))}
               <div className="pt-4 space-y-2 border-t border-border/50">
-                <Button variant="ghost" className="w-full">
-                  Sign In
-                </Button>
-                <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
-                  Get Started
-                </Button>
+                <Link to="/dashboard">
+                  <Button variant="ghost" className="w-full">
+                    Sign In
+                  </Button>
+                </Link>
+                <Link to="/dashboard">
+                  <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
+                    Get Started
+                  </Button>
+                </Link>
               </div>
             </div>
           </motion.div>
