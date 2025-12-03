@@ -38,7 +38,7 @@ const Dashboard = ({ stats, recentLeads }) => {
 
   const handleGenerateReport = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/reports');
+      const response = await fetch('https://eventflow-ai-backend.onrender.com/api/reports');
       const data = await response.json();
       alert('Report: ' + JSON.stringify(data));
     } catch (error) {
@@ -53,4 +53,5 @@ const Dashboard = ({ stats, recentLeads }) => {
     <button onClick={handleGenerateReport} className="...">Generate Report</button>
   );
 };
+
 
