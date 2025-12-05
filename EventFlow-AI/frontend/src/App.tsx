@@ -11,6 +11,7 @@ import Contact from "./pages/Contact";
 import SignIn from "./pages/SignIn";
 import GetStarted from "./pages/GetStarted";
 import NotFound from "./pages/NotFound";
+import Dashboard from "./components/Dashboard";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +29,7 @@ const App = () => (
           <Route path="/contact" element={<Contact />} />
           <Route path="/sign-in" element={<SignIn />} />
           <Route path="/get-started" element={<GetStarted />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
