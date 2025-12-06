@@ -16,9 +16,19 @@ const DashboardPage = () => {
   useEffect(() => {
     // Fetch stats
     fetch(`${API_URL}/api/stats`)
-      .then(res => res.json())
-      .then(data => setStats(data))
-      .catch(err => console.error('Error fetching stats:', err));
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to fetch');
+        return res.json();
+      })
+      .then(data => {
+        if (data && typeof data === 'object') {
+          setStats(data);
+        }
+      })
+      .catch(err => {
+        console.error('Error fetching stats:', err);
+        // Keep default stats values
+      });
 
     // Fetch recent leads
     fetch(`${API_URL}/api/leads/recent`)
