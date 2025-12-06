@@ -14,23 +14,37 @@ const DashboardPage = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch stats
-    fetch(`${API_URL}/api/stats`)
-      .then(data => setStats(data || {
-        totalLeads: 0,
-        newLeads: 0, 
-        convertedLeads: 0,
-        activeEvents: 0
-      }))
-
-
-    // Fetch recent leads
-    fetch(`${API_URL}/api/leads/recent`)
-      .then(res => res.json())
-      .then(data => setRecentLeads(data))
-      .catch(err => console.error('Error fetching leads:', err))
-      .finally(() => setLoading(false));
-  }, []);
+      fetch(`${API_URL}/api/stats`)
+    .then(res => {
+      if (!res.ok) throw new Error('API failed');
+      return res.json();
+    })
+    .then(data => {
+      if (data) {
+        setStats(data);
+      }
+      setLoading(false);
+    })
+    .catch(err => {
+      console.error('Error fetching stats:', err);
+      // Keep default values
+      setLoading(false);
+    });
+  
+  fetch(`${API_URL}/api/leads/recent`)
+    .then(res => {
+      if (!res.ok) throw new Error('API failed');
+      return res.json();
+    })
+    .then(data => {
+      if (data && Array.isArray(data)) {
+        setRecentLeads(data);
+      }
+    })
+    .catch(err => {
+      console.error('Error fetching leads:', err);
+    })
+    .finally(() => setLoading(false));
 
   if (loading) return <div>Loading...</div>;
 
