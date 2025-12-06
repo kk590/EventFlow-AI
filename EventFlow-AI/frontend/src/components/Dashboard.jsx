@@ -46,6 +46,7 @@ const RecentLeadCard = ({ lead }) => (
 );
 
 const Dashboard = ({ stats, recentLeads }) => {
+  const { totalLeads = 0, newLeads = 0, convertedLeads = 0, activeEvents = 0 } = stats
   const handleAddLead = async () => {
   try {
     const response = await fetch('https://eventflow-ai-backend.onrender.com/api/leads', {
@@ -167,4 +168,5 @@ const handleGenerateReport = async () => {
 
 export default Dashboard;
   
+
 
